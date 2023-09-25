@@ -33,7 +33,7 @@ if CUDA:
     model = RNN_model(target_dim=26, hidden_units=16).cuda()
 else:
     model = RNN_model(target_dim=26, hidden_units=16)
-    
+
 # define hyper parameter
 n_epoch = 5
 lr = 0.001
@@ -78,6 +78,10 @@ for n in tqdm(range(n_epoch)):
             prev_guess = prev_guess.cuda()
         optimizer.zero_grad()
         predict = model(obscured_word, prev_guess).squeeze(1)
+
+        if CUDA:
+            predict = predict.cuda()
+            correct_response = correct_response.cuda()
 
         loss = loss_func(predict, correct_response)
         loss.backward()
