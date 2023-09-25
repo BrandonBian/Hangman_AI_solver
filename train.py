@@ -6,6 +6,7 @@ import torch.nn as nn
 from model import Word2Batch, RNN_model
 CUDA = torch.cuda.is_available()
 
+print("CUDA", CUDA)
 
 def show_game(original_word, guesses, obscured_words_seen):
     print('Hidden word was "{}"'.format(original_word))
@@ -31,7 +32,7 @@ num_words = len(words)
 model = RNN_model(target_dim=26, hidden_units=16)
 
 # define hyper parameter
-n_epoch = 2
+n_epoch = 5
 lr = 0.001
 record_step = 100  # output result every 100 words
 optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=1e-5)
@@ -82,13 +83,13 @@ for n in tqdm(range(n_epoch)):
         bce_loss += loss.item()
         # print("for word {}, the BCE loss is {:4f}, time used:{:4f}".format(word, loss.item(), curr_time - start_time))
         # show guess status
-        if i % record_step == 0:
-            guesses = [chr(i+97) for i in torch.argmax(prev_guess, 1)]
-            show_game(word, guesses, obscured_word)
+        # if i % record_step == 0:
+        #     guesses = [chr(i+97) for i in torch.argmax(prev_guess, 1)]
+        #     show_game(word, guesses, obscured_word)
         tot_sample += 1
         iterator.update(1)
 
-    print("Avg BCE Loss:", bce_loss / tot_sample)
+    print(f"Epoch {n}: Avg BCE Loss:", bce_loss / tot_sample)
 
 
 # Define the path where you want to save the model
