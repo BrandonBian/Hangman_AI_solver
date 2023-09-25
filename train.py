@@ -72,6 +72,7 @@ for n in tqdm(range(n_epoch)):
         obscured_word, prev_guess, correct_response = new_batch.game_mimic()
         if CUDA:
             obscured_word = obscured_word.cuda()
+            prev_guess = prev_guess.cuda()
         optimizer.zero_grad()
         predict = model(obscured_word, prev_guess).squeeze(1)
 
