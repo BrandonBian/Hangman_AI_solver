@@ -74,7 +74,7 @@ class Word2Batch:
                 obscured_word = obscured_word.cuda()
                 prev_guess = prev_guess.cuda()
 
-            model.eval()
+            self.model.eval()
             guess = self.model(obscured_word, prev_guess)  # output of guess should be a 1 by 26 vector
             guess = torch.argmax(guess, dim=2).item()
             self.guessed_letter.add(guess)

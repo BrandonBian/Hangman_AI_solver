@@ -1,5 +1,5 @@
 
-import argpase
+import argparse
 import collections
 import pandas as pd
 import numpy as np
@@ -8,7 +8,7 @@ import torch
 
 def arg_parser():
     parser = argparse.ArgumentParser(description="hangman game config")
-    parser.add_argument("--train_path", type=str, default="words_250000_train.txt",
+    parser.add_argument("--train_set", type=str, default="words_250000_train.txt",
                         help="path of the train dictionary")
     parser.add_argument("--lives", type=int, default=6,
                         help="upper limit of fail guesses")
@@ -149,7 +149,7 @@ class HangmanGame(object):
         return obscured_word
 
     def guess(self, word):  # word input example: "_ p p _ e "
-
+        print(word)
         # divided word group by word length
         all_words = self.freq_by_length[len(word)]
         all_gram = self.n_gram[-1]
