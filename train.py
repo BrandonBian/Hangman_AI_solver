@@ -29,8 +29,11 @@ words = get_all_words(file_path)
 num_words = len(words)
 
 # define model
-model = RNN_model(target_dim=26, hidden_units=16)
-
+if CUDA:
+    model = RNN_model(target_dim=26, hidden_units=16).cuda()
+else:
+    model = RNN_model(target_dim=26, hidden_units=16)
+    
 # define hyper parameter
 n_epoch = 5
 lr = 0.001
