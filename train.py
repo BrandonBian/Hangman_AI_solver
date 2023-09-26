@@ -35,7 +35,7 @@ else:
     model = RNN_model(target_dim=26, hidden_units=16)
 
 # define hyper parameter
-n_epoch = 5
+n_epoch = 1
 lr = 0.001
 record_step = 100  # output result every 100 words
 optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=1e-5)
