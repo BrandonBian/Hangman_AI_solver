@@ -291,9 +291,9 @@ progress_printer = cntk.logging.progress_print.ProgressPrinter(freq=EPOCH_SIZE, 
 # %%
 from tqdm import tqdm
 
-NUM_EPOCHS = 1
+NUM_EPOCHS = 20
 total_samples = 0
-model_filename = './hangman_model_sample.dnn'
+model_filename = './final_model.dnn'
 
 for epoch in range(NUM_EPOCHS):
     i = 0
@@ -372,7 +372,9 @@ other_player.play_by_play()
 # First we evaluate the model on all words in the validation set:
 
 # %%
-model_filename = './hangman_model_sample.dnn'
+from tqdm import tqdm
+
+model_filename = './hangman_model_ref.dnn'
 current_model = cntk.load_model(model_filename)
 
 # %%
@@ -416,6 +418,62 @@ my_player.play_by_play()
 results = my_player.evaluate_performance()
 print('The model {} this game'.format('won' if results[0] else 'did not win'))
 print('The model made {} correct guesses and {} incorrect guesses'.format(results[1], results[2]))
+
+# %% [markdown]
+# ## API
+
+# %%
+word = "app_e"
+
+# %%
+# Encode and mask guessed letters
+guessed_letters = ['x', 'y', 'z']
+
+encode_previous_guesses = np.zeros(26, dtype=np.float32)
+for letter in guessed_letters:
+    # Already guessed, mask it
+    encode_previous_guesses[ord(letter) - ord('a')] = 1
+
+print(encode_previous_guesses)
+
+# %%
+def obscure(word):
+    # Ref (Azure Tutorial on LSTM Obscuring): https://github.com/Azure/Hangman/tree/master
+    word_idx = [ord(i) - ord('a') if i != "_" else 26 for i in word]
+    obscured_word = np.zeros((len(word), 27), dtype=np.float32)
+    for i, j in enumerate(word_idx):
+        obscured_word[i, j] = 1
+        
+    return obscured_word
+
+obscure(word)
+
+# %%
+def encode_obscured_word(word):
+    word = [i if i in guessed_letters else 26 for i in word]
+    obscured_word = np.zeros((len(word), 27), dtype=np.float32)
+    for i, j in enumerate(word):
+        obscured_word[i, j] = 1
+    return(obscured_word)
+
+encode_obscured_word(word)
+
+# %%
+# Inference
+prediction = np.argmax(np.squeeze(current_model.eval(
+    ({current_model.arguments[0]: np.array(obscure(word)),
+      current_model.arguments[1]: np.array(encode_previous_guesses)})
+)))
+
+guess = chr(prediction + ord('a'))
+
+guess
+
+# %%
+current_model = cntk.load_model("././hangman_model_ref.dnn")
+my_player = HangmanPlayer("gamma", current_model)
+_ = my_player.run()
+my_player.play_by_play()
 
 # %%
 
