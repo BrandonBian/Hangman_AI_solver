@@ -1,4 +1,4 @@
-## Environment set-up
+## Environment set-up: In Anaconda
 ```bash
 conda create --name hangman python=3.5
 pip install cntk
@@ -7,4 +7,10 @@ pip install pywin32 -U
 pip install numpy
 pip install pandas
 pip install tqdm
+```
+
+## Environment set-up: In Pod
+```bash
+conda create --name hangman python=3.5 --yes
+
 ```
